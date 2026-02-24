@@ -48,7 +48,6 @@ int menu() {
 
 Appliance registerAppliance() {
     Appliance a;
-
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
     do {
@@ -70,7 +69,6 @@ Appliance registerAppliance() {
         clearBadInput();
     }
 
-    cout << "Appliance registered successfully!\n";
     return a;
 }
 
@@ -95,7 +93,6 @@ void searchAppliance(const vector<Appliance>& appliances) {
     }
 
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
-
     string query;
     cout << "Enter appliance name to search: ";
     getline(cin, query);
@@ -105,8 +102,7 @@ void searchAppliance(const vector<Appliance>& appliances) {
 
     for (const auto& a : appliances) {
         if (toLowerStr(a.name).find(qLower) != string::npos) {
-            cout << "Found: "
-                 << a.name << " | "
+            cout << a.name << " | "
                  << a.powerW << "W | "
                  << a.hoursPerDay << " hrs | "
                  << a.energyKWhPerDay() << " kWh/day\n";
@@ -118,6 +114,31 @@ void searchAppliance(const vector<Appliance>& appliances) {
         cout << "No appliance matched.\n";
 }
 
+void showEnergySummary(const vector<Appliance>& appliances) {
+    if (appliances.empty()) {
+        cout << "No appliances registered.\n";
+        return;
+    }
+
+    double total = 0.0;
+
+    cout << "\n----- ENERGY SUMMARY -----\n";
+
+    for (const auto& a : appliances) {
+        double energy = a.energyKWhPerDay();
+        total += energy;
+
+        cout << a.name << ": "
+             << fixed << setprecision(3)
+             << energy << " kWh/day\n";
+    }
+
+    cout << "--------------------------\n";
+    cout << "TOTAL ENERGY: "
+         << fixed << setprecision(3)
+         << total << " kWh/day\n";
+}
+
 int main() {
     vector<Appliance> appliances;
 
@@ -125,7 +146,6 @@ int main() {
         int choice = menu();
 
         switch (choice) {
-
         case 1:
             appliances.push_back(registerAppliance());
             break;
@@ -138,8 +158,11 @@ int main() {
             searchAppliance(appliances);
             break;
 
+        case 4:
+            showEnergySummary(appliances);
+            break;
+
         case 0:
-            cout << "Goodbye!\n";
             return 0;
 
         default:
