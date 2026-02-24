@@ -3,6 +3,8 @@
 #include <string>
 #include <limits>
 #include <iomanip>
+#include <algorithm>
+#include <cctype>
 
 using namespace std;
 
@@ -15,6 +17,12 @@ struct Appliance {
 void clearBadInput() {
     cin.clear();
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
+}
+
+string toLowerStr(string s) {
+    transform(s.begin(), s.end(), s.begin(),
+              [](unsigned char c) { return tolower(c); });
+    return s;
 }
 
 int menu() {
@@ -69,21 +77,41 @@ void viewAllAppliances(const vector<Appliance>& appliances) {
     }
 
     cout << "\n================= APPLIANCES =================\n";
-    cout << left
-         << setw(5)  << "No."
-         << setw(20) << "Name"
-         << setw(12) << "Power(W)"
-         << setw(12) << "Hours/day"
-         << "\n----------------------------------------------\n";
-
     for (size_t i = 0; i < appliances.size(); i++) {
-        cout << left
-             << setw(5)  << (i + 1)
-             << setw(20) << appliances[i].name
-             << setw(12) << appliances[i].powerW
-             << setw(12) << appliances[i].hoursPerDay
-             << "\n";
+        cout << i + 1 << ". "
+             << appliances[i].name << " | "
+             << appliances[i].powerW << "W | "
+             << appliances[i].hoursPerDay << " hrs\n";
     }
+}
+
+void searchAppliance(const vector<Appliance>& appliances) {
+    if (appliances.empty()) {
+        cout << "No appliances registered.\n";
+        return;
+    }
+
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+    string query;
+    cout << "Enter appliance name to search: ";
+    getline(cin, query);
+
+    string qLower = toLowerStr(query);
+    bool found = false;
+
+    for (const auto& a : appliances) {
+        if (toLowerStr(a.name).find(qLower) != string::npos) {
+            cout << "Found: "
+                 << a.name << " | "
+                 << a.powerW << "W | "
+                 << a.hoursPerDay << " hrs\n";
+            found = true;
+        }
+    }
+
+    if (!found)
+        cout << "No appliance matched.\n";
 }
 
 int main() {
@@ -100,6 +128,10 @@ int main() {
 
         case 2:
             viewAllAppliances(appliances);
+            break;
+
+        case 3:
+            searchAppliance(appliances);
             break;
 
         case 0:
