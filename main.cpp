@@ -1,17 +1,21 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <limits>
 
 using namespace std;
 
-// Basic appliance structure
 struct Appliance {
     string name;
     double powerW;
     double hoursPerDay;
 };
 
-// Menu function
+void clearBadInput() {
+    cin.clear();
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+}
+
 int menu() {
     cout << "\n==============================\n";
     cout << "     Electrical Load Monitoring\n";
@@ -29,6 +33,34 @@ int menu() {
     return choice;
 }
 
+Appliance registerAppliance() {
+    Appliance a;
+
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+    do {
+        cout << "Enter appliance name: ";
+        getline(cin, a.name);
+    } while (a.name.empty());
+
+    while (true) {
+        cout << "Enter power rating (W): ";
+        cin >> a.powerW;
+        if (!cin.fail() && a.powerW > 0) break;
+        clearBadInput();
+    }
+
+    while (true) {
+        cout << "Enter usage hours per day (0 - 24): ";
+        cin >> a.hoursPerDay;
+        if (!cin.fail() && a.hoursPerDay >= 0 && a.hoursPerDay <= 24) break;
+        clearBadInput();
+    }
+
+    cout << "Appliance registered successfully!\n";
+    return a;
+}
+
 int main() {
     vector<Appliance> appliances;
 
@@ -36,12 +68,17 @@ int main() {
         int choice = menu();
 
         switch (choice) {
-            case 0:
-                cout << "Goodbye!\n";
-                return 0;
 
-            default:
-                cout << "Feature not implemented yet.\n";
+        case 1:
+            appliances.push_back(registerAppliance());
+            break;
+
+        case 0:
+            cout << "Goodbye!\n";
+            return 0;
+
+        default:
+            cout << "Feature not implemented yet.\n";
         }
     }
 }
