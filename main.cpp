@@ -139,6 +139,41 @@ void showEnergySummary(const vector<Appliance>& appliances) {
          << total << " kWh/day\n";
 }
 
+void calculateBill(const vector<Appliance>& appliances) {
+    if (appliances.empty()) {
+        cout << "No appliances registered.\n";
+        return;
+    }
+
+    double tariff;
+    while (true) {
+        cout << "Enter electricity tariff per kWh: ";
+        cin >> tariff;
+
+        if (!cin.fail() && tariff > 0) break;
+        clearBadInput();
+    }
+
+    double totalEnergy = 0.0;
+    for (const auto& a : appliances)
+        totalEnergy += a.energyKWhPerDay();
+
+    double totalCost = totalEnergy * tariff;
+
+    cout << "\n===== BILL SUMMARY =====\n";
+    cout << "Total Energy: "
+         << fixed << setprecision(3)
+         << totalEnergy << " kWh/day\n";
+
+    cout << "Tariff: "
+         << fixed << setprecision(2)
+         << tariff << " per kWh\n";
+
+    cout << "Total Cost: "
+         << fixed << setprecision(2)
+         << totalCost << "\n";
+}
+
 int main() {
     vector<Appliance> appliances;
 
@@ -146,6 +181,7 @@ int main() {
         int choice = menu();
 
         switch (choice) {
+
         case 1:
             appliances.push_back(registerAppliance());
             break;
@@ -162,11 +198,16 @@ int main() {
             showEnergySummary(appliances);
             break;
 
+        case 5:
+            calculateBill(appliances);
+            break;
+
         case 0:
+            cout << "Goodbye!\n";
             return 0;
 
         default:
-            cout << "Feature not implemented yet.\n";
+            cout << "Invalid choice.\n";
         }
     }
 }
