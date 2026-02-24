@@ -12,6 +12,10 @@ struct Appliance {
     string name;
     double powerW;
     double hoursPerDay;
+
+    double energyKWhPerDay() const {
+        return (powerW * hoursPerDay) / 1000.0;
+    }
 };
 
 void clearBadInput() {
@@ -76,12 +80,11 @@ void viewAllAppliances(const vector<Appliance>& appliances) {
         return;
     }
 
-    cout << "\n================= APPLIANCES =================\n";
-    for (size_t i = 0; i < appliances.size(); i++) {
-        cout << i + 1 << ". "
-             << appliances[i].name << " | "
-             << appliances[i].powerW << "W | "
-             << appliances[i].hoursPerDay << " hrs\n";
+    for (const auto& a : appliances) {
+        cout << a.name << " | "
+             << a.powerW << "W | "
+             << a.hoursPerDay << " hrs | "
+             << a.energyKWhPerDay() << " kWh/day\n";
     }
 }
 
@@ -105,7 +108,8 @@ void searchAppliance(const vector<Appliance>& appliances) {
             cout << "Found: "
                  << a.name << " | "
                  << a.powerW << "W | "
-                 << a.hoursPerDay << " hrs\n";
+                 << a.hoursPerDay << " hrs | "
+                 << a.energyKWhPerDay() << " kWh/day\n";
             found = true;
         }
     }
