@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 #include <limits>
+#include <iomanip>
 
 using namespace std;
 
@@ -61,6 +62,30 @@ Appliance registerAppliance() {
     return a;
 }
 
+void viewAllAppliances(const vector<Appliance>& appliances) {
+    if (appliances.empty()) {
+        cout << "No appliances registered.\n";
+        return;
+    }
+
+    cout << "\n================= APPLIANCES =================\n";
+    cout << left
+         << setw(5)  << "No."
+         << setw(20) << "Name"
+         << setw(12) << "Power(W)"
+         << setw(12) << "Hours/day"
+         << "\n----------------------------------------------\n";
+
+    for (size_t i = 0; i < appliances.size(); i++) {
+        cout << left
+             << setw(5)  << (i + 1)
+             << setw(20) << appliances[i].name
+             << setw(12) << appliances[i].powerW
+             << setw(12) << appliances[i].hoursPerDay
+             << "\n";
+    }
+}
+
 int main() {
     vector<Appliance> appliances;
 
@@ -71,6 +96,10 @@ int main() {
 
         case 1:
             appliances.push_back(registerAppliance());
+            break;
+
+        case 2:
+            viewAllAppliances(appliances);
             break;
 
         case 0:
