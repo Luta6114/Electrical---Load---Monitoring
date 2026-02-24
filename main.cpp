@@ -5,6 +5,7 @@
 #include <iomanip>
 #include <algorithm>
 #include <cctype>
+#include <fstream>   // NEW
 
 using namespace std;
 
@@ -72,6 +73,20 @@ Appliance registerAppliance() {
     return a;
 }
 
+void saveApplianceToFile(const Appliance& a) {
+    ofstream file("appliances.txt", ios::app);
+
+    if (file.is_open()) {
+        file << a.name << ", "
+             << a.powerW << ", "
+             << a.hoursPerDay << ", "
+             << a.energyKWhPerDay() << " kWh/day\n";
+        file.close();
+    } else {
+        cout << "Error saving to file.\n";
+    }
+}
+
 void viewAllAppliances(const vector<Appliance>& appliances) {
     if (appliances.empty()) {
         cout << "No appliances registered.\n";
@@ -122,18 +137,9 @@ void showEnergySummary(const vector<Appliance>& appliances) {
 
     double total = 0.0;
 
-    cout << "\n----- ENERGY SUMMARY -----\n";
+    for (const auto& a : appliances)
+        total += a.energyKWhPerDay();
 
-    for (const auto& a : appliances) {
-        double energy = a.energyKWhPerDay();
-        total += energy;
-
-        cout << a.name << ": "
-             << fixed << setprecision(3)
-             << energy << " kWh/day\n";
-    }
-
-    cout << "--------------------------\n";
     cout << "TOTAL ENERGY: "
          << fixed << setprecision(3)
          << total << " kWh/day\n";
@@ -161,17 +167,9 @@ void calculateBill(const vector<Appliance>& appliances) {
     double totalCost = totalEnergy * tariff;
 
     cout << "\n===== BILL SUMMARY =====\n";
-    cout << "Total Energy: "
-         << fixed << setprecision(3)
-         << totalEnergy << " kWh/day\n";
-
-    cout << "Tariff: "
-         << fixed << setprecision(2)
-         << tariff << " per kWh\n";
-
-    cout << "Total Cost: "
-         << fixed << setprecision(2)
-         << totalCost << "\n";
+    cout << "Total Energy: " << totalEnergy << " kWh/day\n";
+    cout << "Tariff: " << tariff << " per kWh\n";
+    cout << "Total Cost: " << totalCost << "\n";
 }
 
 int main() {
@@ -182,9 +180,12 @@ int main() {
 
         switch (choice) {
 
-        case 1:
-            appliances.push_back(registerAppliance());
+        case 1: {
+            Appliance a = registerAppliance();
+            appliances.push_back(a);
+            saveApplianceToFile(a);
             break;
+        }
 
         case 2:
             viewAllAppliances(appliances);
