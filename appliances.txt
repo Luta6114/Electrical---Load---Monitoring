@@ -1,0 +1,2 @@
+Blender, 500W, 2 hrs, 1 kWh/day
+Bulb, 20W, 12 hrs, 0.24 kWh/day
